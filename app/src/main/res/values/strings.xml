@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">V Chat</string>
+    <string name="str_home">Home</string>
+    <string name="str_user">User</string>
+    <string name="str_notification">Notification</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_bottom">BottomActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>
