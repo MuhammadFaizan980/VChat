@@ -19,8 +19,12 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.vchat.muhammadfaizan.vchat.R
+import com.vchat.muhammadfaizan.vchat.model.checkUserData
 
 class ActivityLogin : AppCompatActivity() {
     lateinit var txtInputEmail: TextInputLayout
@@ -31,7 +35,8 @@ class ActivityLogin : AppCompatActivity() {
     lateinit var btnRegister: Button
     lateinit var progressBar: ProgressBar
     lateinit var firebaseAuth: FirebaseAuth
-    lateinit var btnSignIn : SignInButton
+    lateinit var btnSignIn: SignInButton
+    lateinit var checkList: ArrayList<checkUserData>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -49,6 +54,7 @@ class ActivityLogin : AppCompatActivity() {
         progressBar = findViewById(R.id.pBarLogin)
         firebaseAuth = FirebaseAuth.getInstance()
         btnSignIn = findViewById(R.id.btnGoogle)
+        checkList = ArrayList<checkUserData>()
     }
 
     override fun onStart() {
@@ -61,7 +67,7 @@ class ActivityLogin : AppCompatActivity() {
 
     fun loginUser() {
 
-        btnSignIn.setOnClickListener(object : View.OnClickListener{
+        btnSignIn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 progressBar.visibility = View.VISIBLE
                 googleSignIn()
@@ -117,14 +123,14 @@ class ActivityLogin : AppCompatActivity() {
 
     }
 
-    fun googleSignIn(){
+    fun googleSignIn() {
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
 
-        val mGoogleSignInClient  = GoogleSignIn.getClient(this, gso);
+        val mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, 2)
     }
@@ -148,25 +154,30 @@ class ActivityLogin : AppCompatActivity() {
         }
     }
 
-    fun firebaseAuthWithGoogle(account : GoogleSignInAccount){
-        var doesUserExist : Boolean = checkUser(account)
+    fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         progressBar.visibility = View.VISIBLE
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(object :  OnCompleteListener<AuthResult> {
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(object : OnCompleteListener<AuthResult> {
             override fun onComplete(p0: Task<AuthResult>) {
                 if (p0.isSuccessful) {
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
-                    finish()
+                    FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().uid!!).child("id").setValue(FirebaseAuth.getInstance().uid).addOnCompleteListener(object : OnCompleteListener<Void> {
+                        override fun onComplete(p0: Task<Void>) {
+                            if (p0.isSuccessful) {
+                                startActivity(Intent(applicationContext, MainActivity::class.java))
+                                finish()
+                            } else {
+                                Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
+                                progressBar.visibility = View.INVISIBLE
+                            }
+                        }
+                    })
+
+
                 } else {
                     progressBar.visibility = View.INVISIBLE
                     Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         })
-    }
-
-    fun checkUser(account : GoogleSignInAccount) : Boolean {
-        var checkRef = FirebaseDatabase.getInstance().getReference("Users")
-        chec
     }
 }
