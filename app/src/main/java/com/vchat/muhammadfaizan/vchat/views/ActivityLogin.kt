@@ -9,10 +9,17 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import com.vchat.muhammadfaizan.vchat.R
 
 class ActivityLogin : AppCompatActivity() {
@@ -24,6 +31,7 @@ class ActivityLogin : AppCompatActivity() {
     lateinit var btnRegister: Button
     lateinit var progressBar: ProgressBar
     lateinit var firebaseAuth: FirebaseAuth
+    lateinit var btnSignIn : SignInButton
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -40,6 +48,7 @@ class ActivityLogin : AppCompatActivity() {
         btnRegister = findViewById(R.id.btnRegister)
         progressBar = findViewById(R.id.pBarLogin)
         firebaseAuth = FirebaseAuth.getInstance()
+        btnSignIn = findViewById(R.id.btnGoogle)
     }
 
     override fun onStart() {
@@ -51,6 +60,13 @@ class ActivityLogin : AppCompatActivity() {
     }
 
     fun loginUser() {
+
+        btnSignIn.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                progressBar.visibility = View.VISIBLE
+                googleSignIn()
+            }
+        })
 
         btnLogin.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
@@ -99,5 +115,58 @@ class ActivityLogin : AppCompatActivity() {
             txtInputPass.isErrorEnabled = false
         }
 
+    }
+
+    fun googleSignIn(){
+        // Configure Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+        val mGoogleSignInClient  = GoogleSignIn.getClient(this, gso);
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, 2)
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        progressBar.visibility = View.INVISIBLE
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == 2) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Toast.makeText(applicationContext, "Signin Error...", Toast.LENGTH_SHORT).show()
+                // ...
+            }
+        }
+    }
+
+    fun firebaseAuthWithGoogle(account : GoogleSignInAccount){
+        var doesUserExist : Boolean = checkUser(account)
+        progressBar.visibility = View.VISIBLE
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(object :  OnCompleteListener<AuthResult> {
+            override fun onComplete(p0: Task<AuthResult>) {
+                if (p0.isSuccessful) {
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                    finish()
+                } else {
+                    progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+    }
+
+    fun checkUser(account : GoogleSignInAccount) : Boolean {
+        var checkRef = FirebaseDatabase.getInstance().getReference("Users")
+        chec
     }
 }
