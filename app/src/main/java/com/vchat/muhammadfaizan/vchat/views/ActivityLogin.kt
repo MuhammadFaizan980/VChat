@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.vchat.muhammadfaizan.vchat.R
-import com.vchat.muhammadfaizan.vchat.model.checkUserData
 
 class ActivityLogin : AppCompatActivity() {
     lateinit var txtInputEmail: TextInputLayout
@@ -36,7 +35,6 @@ class ActivityLogin : AppCompatActivity() {
     lateinit var progressBar: ProgressBar
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var btnSignIn: SignInButton
-    lateinit var checkList: ArrayList<checkUserData>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -54,7 +52,6 @@ class ActivityLogin : AppCompatActivity() {
         progressBar = findViewById(R.id.pBarLogin)
         firebaseAuth = FirebaseAuth.getInstance()
         btnSignIn = findViewById(R.id.btnGoogle)
-        checkList = ArrayList<checkUserData>()
     }
 
     override fun onStart() {
