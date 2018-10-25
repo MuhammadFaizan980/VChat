@@ -16,12 +16,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.vchat.muhammadfaizan.vchat.R
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-    lateinit var mNav: BottomNavigationView
-    lateinit var home: HomeFragment
-    lateinit var user: UserFragmnet
-    lateinit var notification: NotificationFragment
-    lateinit var firebaseAuth: FirebaseAuth
-    lateinit var progressbar: ProgressBar
+    private lateinit var mNav: BottomNavigationView
+    private lateinit var home: HomeFragment
+    private lateinit var user: UserFragmnet
+    private lateinit var notification: NotificationFragment
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var progressbar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         checkEmail()
     }
 
-    fun initViews() {
+    private fun initViews() {
         mNav = findViewById(R.id.mNav)
         home = HomeFragment()
         user = UserFragmnet()
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         progressbar = findViewById(R.id.mainPBar)
     }
 
-    fun setListener() {
+    private fun setListener() {
         mNav.setOnNavigationItemSelectedListener(this)
     }
 
@@ -65,13 +65,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-    fun setFragment(fragment: Fragment) {
+    private fun setFragment(fragment: Fragment) {
         var setFragObj: FragmentTransaction = supportFragmentManager.beginTransaction()
         setFragObj.replace(R.id.mFrame, fragment)
         setFragObj.commit()
     }
 
-    fun checkEmail() {
+    private fun checkEmail() {
         if (!firebaseAuth.currentUser!!.isEmailVerified) {
             var dialog: AlertDialog.Builder = AlertDialog.Builder(this)
             dialog.setCancelable(false)
