@@ -37,5 +37,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
