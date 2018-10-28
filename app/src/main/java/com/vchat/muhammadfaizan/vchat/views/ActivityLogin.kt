@@ -125,7 +125,8 @@ class ActivityLogin : AppCompatActivity() {
                         override fun onComplete(p0: Task<AuthResult>) {
                             progressBar.visibility = View.INVISIBLE
                             if (p0.isSuccessful) {
-                                startActivity(Intent(applicationContext, MainActivity::class.java))
+                                startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "email"))
+                                finish()
                             } else {
                                 Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
                             }
@@ -195,7 +196,7 @@ class ActivityLogin : AppCompatActivity() {
                     FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().uid!!).child("id").setValue(FirebaseAuth.getInstance().uid).addOnCompleteListener(object : OnCompleteListener<Void> {
                         override fun onComplete(p0: Task<Void>) {
                             if (p0.isSuccessful) {
-                                startActivity(Intent(applicationContext, MainActivity::class.java))
+                                startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "google"))
                                 finish()
                             } else {
                                 Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
@@ -224,7 +225,7 @@ class ActivityLogin : AppCompatActivity() {
                         FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().uid!!).child("id").setValue(FirebaseAuth.getInstance().uid).addOnCompleteListener(object : OnCompleteListener<Void> {
                             override fun onComplete(p0: Task<Void>) {
                                 if (p0.isSuccessful) {
-                                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                                    startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "facebook"))
                                     finish()
                                 } else {
                                     Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()

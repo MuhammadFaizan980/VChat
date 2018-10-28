@@ -72,29 +72,32 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun checkEmail() {
-        if (!firebaseAuth.currentUser!!.isEmailVerified) {
-            var dialog: AlertDialog.Builder = AlertDialog.Builder(this)
-            dialog.setCancelable(false)
-            dialog.setTitle("Warning!")
-            dialog.setMessage("Your email is not verified\nPlease verify your email by clicking Verify button")
-            dialog.setPositiveButton("Verify", DialogInterface.OnClickListener { dialogInterface, i ->
-                progressbar.visibility = View.VISIBLE
-                firebaseAuth.currentUser!!.sendEmailVerification().addOnCompleteListener { task: Task<Void> ->
-                    if (task.isSuccessful) {
-                        progressbar.visibility = View.INVISIBLE
-                        Toast.makeText(applicationContext, "Verification link sent to your email\nPlease verify as soon as possible", Toast.LENGTH_LONG).show()
-                        dialogInterface.cancel()
-                    } else {
-                        progressbar.visibility = View.INVISIBLE
-                        Toast.makeText(applicationContext, task.exception?.message.toString(), Toast.LENGTH_LONG).show()
-                        dialogInterface.cancel()
-                    }
-                }
-            }).setNegativeButton("Cancel", DialogInterface.OnClickListener { dialogInterface, i ->
-                dialogInterface.cancel()
-            })
 
-            dialog.show()
+        if (intent.extras.get("provider").equals("email")) {
+            if (!firebaseAuth.currentUser!!.isEmailVerified) {
+                var dialog: AlertDialog.Builder = AlertDialog.Builder(this)
+                dialog.setCancelable(false)
+                dialog.setTitle("Warning!")
+                dialog.setMessage("Your email is not verified\nPlease verify your email by clicking Verify button")
+                dialog.setPositiveButton("Verify", DialogInterface.OnClickListener { dialogInterface, i ->
+                    progressbar.visibility = View.VISIBLE
+                    firebaseAuth.currentUser!!.sendEmailVerification().addOnCompleteListener { task: Task<Void> ->
+                        if (task.isSuccessful) {
+                            progressbar.visibility = View.INVISIBLE
+                            Toast.makeText(applicationContext, "Verification link sent to your email\nPlease verify as soon as possible", Toast.LENGTH_LONG).show()
+                            dialogInterface.cancel()
+                        } else {
+                            progressbar.visibility = View.INVISIBLE
+                            Toast.makeText(applicationContext, task.exception?.message.toString(), Toast.LENGTH_LONG).show()
+                            dialogInterface.cancel()
+                        }
+                    }
+                }).setNegativeButton("Cancel", DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.cancel()
+                })
+
+                dialog.show()
+            }
         }
     }
 }
