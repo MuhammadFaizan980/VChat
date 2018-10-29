@@ -31,12 +31,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.vchat.muhammadfaizan.vchat.R
 
 class ActivityLogin : AppCompatActivity() {
-    lateinit var txtInputEmail: TextInputLayout
-    lateinit var txtInputPass: TextInputLayout
-    lateinit var txtEmail: TextInputEditText
-    lateinit var txtPass: TextInputEditText
-    lateinit var btnLogin: Button
-    lateinit var btnRegister: Button
     lateinit var progressBar: ProgressBar
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var btnSignInGoogle: SignInButton
@@ -52,12 +46,6 @@ class ActivityLogin : AppCompatActivity() {
     }
 
     fun initViews() {
-        txtInputEmail = findViewById(R.id.inputEmail)
-        txtInputPass = findViewById(R.id.inputPass)
-        txtEmail = findViewById(R.id.txtEmail)
-        txtPass = findViewById(R.id.txtPass)
-        btnLogin = findViewById(R.id.btnLogin)
-        btnRegister = findViewById(R.id.btnRegister)
         progressBar = findViewById(R.id.pBarLogin)
         firebaseAuth = FirebaseAuth.getInstance()
         btnSignInGoogle = findViewById(R.id.btnGoogle)
@@ -104,56 +92,8 @@ class ActivityLogin : AppCompatActivity() {
                 googleSignIn()
             }
         })
-
-        btnLogin.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                var email: String = txtEmail.text.toString().trim()
-                var pass: String = txtPass.text.toString()
-                checkErrorEnabled()
-                if (email.equals("") || pass.equals("")) {
-                    if (email.equals("")) {
-                        txtInputEmail.error = "Cannot be empty!"
-                        txtInputEmail.setErrorEnabled(true)
-                    }
-                    if (pass.equals("")) {
-                        txtInputPass.error = "Cannot be empty!"
-                        txtInputPass.isErrorEnabled = true
-                    }
-                } else {
-                    progressBar.visibility = View.VISIBLE
-                    firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(object : OnCompleteListener<AuthResult> {
-                        override fun onComplete(p0: Task<AuthResult>) {
-                            progressBar.visibility = View.INVISIBLE
-                            if (p0.isSuccessful) {
-                                startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "email"))
-                                finish()
-                            } else {
-                                Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    })
-                }
-            }
-
-        })
-        btnRegister.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                startActivity(Intent(applicationContext, ActivitySignup::class.java))
-                finish()
-            }
-        })
     }
 
-    fun checkErrorEnabled() {
-        if (!txtEmail.text.toString().trim().equals("") && txtInputEmail.isErrorEnabled == true) {
-            txtInputEmail.isErrorEnabled = false
-        }
-
-        if (!txtPass.text.toString().equals("") || txtInputPass.isErrorEnabled == true) {
-            txtInputPass.isErrorEnabled = false
-        }
-
-    }
 
     fun googleSignIn() {
         // Configure Google Sign In
