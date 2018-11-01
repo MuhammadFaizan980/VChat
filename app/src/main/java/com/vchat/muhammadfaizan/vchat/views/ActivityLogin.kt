@@ -2,12 +2,9 @@ package com.vchat.muhammadfaizan.vchat.views
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.facebook.AccessToken
@@ -27,7 +24,6 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.FirebaseDatabase
 import com.vchat.muhammadfaizan.vchat.R
 
 class ActivityLogin : AppCompatActivity() {
@@ -133,19 +129,8 @@ class ActivityLogin : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(object : OnCompleteListener<AuthResult> {
             override fun onComplete(p0: Task<AuthResult>) {
                 if (p0.isSuccessful) {
-                    FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().uid!!).child("id").setValue(FirebaseAuth.getInstance().uid).addOnCompleteListener(object : OnCompleteListener<Void> {
-                        override fun onComplete(p0: Task<Void>) {
-                            if (p0.isSuccessful) {
-                                startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "google"))
-                                finish()
-                            } else {
-                                Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
-                                progressBar.visibility = View.INVISIBLE
-                            }
-                        }
-                    })
-
-
+                    startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "google"))
+                    finish()
                 } else {
                     progressBar.visibility = View.INVISIBLE
                     Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
@@ -162,18 +147,8 @@ class ActivityLogin : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().uid!!).child("id").setValue(FirebaseAuth.getInstance().uid).addOnCompleteListener(object : OnCompleteListener<Void> {
-                            override fun onComplete(p0: Task<Void>) {
-                                if (p0.isSuccessful) {
-                                    startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "facebook"))
-                                    finish()
-                                } else {
-                                    Toast.makeText(applicationContext, p0.exception?.message.toString(), Toast.LENGTH_LONG).show()
-                                    progressBar.visibility = View.INVISIBLE
-                                }
-                            }
-                        })
-
+                        startActivity(Intent(applicationContext, MainActivity::class.java).putExtra("provider", "facebook"))
+                        finish()
                     } else {
                         progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
