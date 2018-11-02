@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.google.android.gms.tasks.Continuation
@@ -104,7 +103,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                     !edtLastName.text.toString().equals("") &&
                     !edtPhoneNumber.text.toString().equals("")) {
                 progressBar.visibility = View.VISIBLE
-                var uploadTask : UploadTask = storageRef.putFile(uri!!);
+                var uploadTask: UploadTask = storageRef.putFile(uri!!);
                 val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let {
@@ -138,37 +137,6 @@ class ActivityProfileSettings : AppCompatActivity() {
                         Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
-
-//
-//
-//                storageRef.putFile(uri!!).addOnCompleteListener(object : OnCompleteListener<UploadTask.TaskSnapshot> {
-//                    override fun onComplete(task: Task<UploadTask.TaskSnapshot>) {
-//                        if (task.isSuccessful) {
-//                            var map = HashMap<String, String>()
-//                            map["User_ID"] = firebaseAuth.uid.toString()
-//                            map["User_Name"] = edtFirstName.text.toString() + " " + edtLastName.text.toString()
-//                            map["Phone_Number"] = edtPhoneNumber.text.toString()
-//                            map["Profile_Image"] = storageRef.downloadUrl.toString()
-//                            Log.i("dxdiag", storageRef.downloadUrl.toString())
-//                            map["Group"] = group
-//                            dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
-//                                override fun onComplete(p0: Task<Void>) {
-//                                    if (p0.isSuccessful) {
-//                                        progressBar.visibility = View.INVISIBLE
-//                                        startActivity(Intent(applicationContext, MainActivity::class.java))
-//                                        finish()
-//                                    } else {
-//                                        progressBar.visibility = View.INVISIBLE
-//                                        Toast.makeText(applicationContext, p0.exception!!.message.toString(), Toast.LENGTH_LONG).show()
-//                                    }
-//                                }
-//                            })
-//                        } else {
-//                            progressBar.visibility = View.INVISIBLE
-//                            Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
-//                        }
-//                    }
-//                })
             } else {
                 Toast.makeText(this, "Fill all fields first and select a group", Toast.LENGTH_LONG).show()
             }
