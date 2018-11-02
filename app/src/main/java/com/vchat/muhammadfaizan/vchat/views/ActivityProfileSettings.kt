@@ -48,7 +48,6 @@ class ActivityProfileSettings : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_settings)
         initViews()
-        checkUserCredentials(firebaseAuth)
         prepareSpinner()
         getUserImageURI()
         setListener()
@@ -126,7 +125,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                         val downloadUri = task.result
                         var map = HashMap<String, String>()
                         map["User_ID"] = firebaseAuth.uid.toString()
-                        map["User_Name"] = edtFirstName.text.toString() + " " + edtLastName.text.toString()
+                        map["User_Name"] = edtFirstName.text.toString().trim() + " " + edtLastName.text.toString().trim()
                         map["Phone_Number"] = edtPhoneNumber.text.toString()
                         map["Profile_Image"] = downloadUri.toString()
                         map["Group"] = group
@@ -202,13 +201,6 @@ class ActivityProfileSettings : AppCompatActivity() {
                     isPermissionGranted = true
                 }
             }
-        }
-    }
-
-    fun checkUserCredentials(auth : FirebaseAuth){
-        if (auth.currentUser!!.displayName != null) {
-            startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
-            finish()
         }
     }
 }
