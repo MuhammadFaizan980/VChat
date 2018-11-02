@@ -1,16 +1,14 @@
 package com.vchat.muhammadfaizan.vchat.views;
 
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.vchat.muhammadfaizan.vchat.R;
@@ -34,7 +32,6 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(view.getContext(), "Home Clicked", Toast.LENGTH_SHORT).show();
             }
         });
-
         return view;
     }
 
