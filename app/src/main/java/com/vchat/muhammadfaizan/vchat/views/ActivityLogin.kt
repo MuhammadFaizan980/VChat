@@ -96,7 +96,6 @@ class ActivityLogin : AppCompatActivity() {
         })
     }
 
-
     fun googleSignIn() {
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -183,7 +182,7 @@ class ActivityLogin : AppCompatActivity() {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
                     var dialog = AlertDialog.Builder(this)
                     dialog.setTitle("Warning!")
-                    dialog.setMessage("You must grant location permissions or the ap will not open")
+                    dialog.setMessage("You must grant location permissions or the app will not open")
                     dialog.setCancelable(false)
                     dialog.setPositiveButton("Close", DialogInterface.OnClickListener { dialogInterface, i ->
                         finish()

@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -47,6 +48,7 @@ class ActivityProfileSettings : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_settings)
         initViews()
+        checkUserCredentials(firebaseAuth)
         prepareSpinner()
         getUserImageURI()
         setListener()
@@ -138,20 +140,30 @@ class ActivityProfileSettings : AppCompatActivity() {
                                         permissionArray[1] = android.Manifest.permission.ACCESS_FINE_LOCATION
                                         ActivityCompat.requestPermissions(this@ActivityProfileSettings, permissionArray, 9)
                                     }
-                                        var locationManager: LocationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                                        var location: Location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                                        var mMap = HashMap<String, String>()
-                                        mMap["Latitude"] = location.latitude.toString()
-                                        mMap["Longitude"] = location.longitude.toString()
-                                        dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                progressBar.visibility = View.INVISIBLE
-                                                startActivity(Intent(applicationContext, MainActivity::class.java))
-                                                finish()
-                                            } else {
-                                                progressBar.visibility = View.INVISIBLE
-                                                Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                    var locationManager: LocationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                    var location: Location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                                    var mMap = HashMap<String, String>()
+                                    mMap["Latitude"] = location.latitude.toString()
+                                    mMap["Longitude"] = location.longitude.toString()
+                                    dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            var profileChangeRequest = UserProfileChangeRequest.Builder()
+                                                    .setDisplayName(edtFirstName.text.toString() + " " + edtLastName.text.toString())
+                                                    .setPhotoUri(uri).build()
+                                            firebaseAuth.currentUser!!.updateProfile(profileChangeRequest).addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    progressBar.visibility = View.INVISIBLE
+                                                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                                                    finish()
+                                                } else {
+                                                    progressBar.visibility = View.INVISIBLE
+                                                    Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                                }
                                             }
+                                        } else {
+                                            progressBar.visibility = View.INVISIBLE
+                                            Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 } else {
                                     progressBar.visibility = View.INVISIBLE
@@ -190,6 +202,13 @@ class ActivityProfileSettings : AppCompatActivity() {
                     isPermissionGranted = true
                 }
             }
+        }
+    }
+
+    fun checkUserCredentials(auth : FirebaseAuth){
+        if (auth.currentUser!!.displayName != null) {
+            startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+            finish()
         }
     }
 }
