@@ -129,7 +129,7 @@ class ActivityLogin : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(object : OnCompleteListener<AuthResult> {
             override fun onComplete(p0: Task<AuthResult>) {
                 if (p0.isSuccessful) {
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                    startActivity(Intent(applicationContext, ActivityProfileSettings::class.java))
                     finish()
                 } else {
                     progressBar.visibility = View.INVISIBLE
@@ -147,7 +147,7 @@ class ActivityLogin : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                        startActivity(Intent(applicationContext, ActivityProfileSettings::class.java))
                         finish()
                     } else {
                         progressBar.visibility = View.INVISIBLE

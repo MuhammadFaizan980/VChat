@@ -5,11 +5,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.*
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.vchat.muhammadfaizan.vchat.R
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -24,10 +31,8 @@ class ActivityProfileSettings : AppCompatActivity() {
     lateinit var progressBar: ProgressBar
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var storageRef: StorageReference
+    lateinit var dbRef: DatabaseReference
     lateinit var group: String
-    lateinit var firstName: String
-    lateinit var lastname: String
-    lateinit var phone: String
     var arr = arrayOfNulls<String>(4)
     var uri: Uri? = null
     private var REQUEST_CODE: Int = 6
@@ -49,7 +54,8 @@ class ActivityProfileSettings : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSaveProfile)
         progressBar = findViewById(R.id.progressSettings)
         firebaseAuth = FirebaseAuth.getInstance()
-        storageRef = FirebaseStorage.getInstance().getReference("Chat_Images/" + System.currentTimeMillis() + ".jpg")
+        dbRef = FirebaseDatabase.getInstance().getReference("Users").child(firebaseAuth.uid!!)
+        storageRef = FirebaseStorage.getInstance().getReference("Profile_Images/" + firebaseAuth.uid + ".jpg")
     }
 
     fun prepareSpinner() {
@@ -97,7 +103,72 @@ class ActivityProfileSettings : AppCompatActivity() {
                     !edtFirstName.text.toString().equals("") &&
                     !edtLastName.text.toString().equals("") &&
                     !edtPhoneNumber.text.toString().equals("")) {
+                progressBar.visibility = View.VISIBLE
+                var uploadTask : UploadTask = storageRef.putFile(uri!!);
+                val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    return@Continuation storageRef.downloadUrl
+                }).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUri = task.result
+                        var map = HashMap<String, String>()
+                        map["User_ID"] = firebaseAuth.uid.toString()
+                        map["User_Name"] = edtFirstName.text.toString() + " " + edtLastName.text.toString()
+                        map["Phone_Number"] = edtPhoneNumber.text.toString()
+                        map["Profile_Image"] = downloadUri.toString()
+                        map["Group"] = group
+                        dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
+                            override fun onComplete(p0: Task<Void>) {
+                                if (p0.isSuccessful) {
+                                    progressBar.visibility = View.INVISIBLE
+                                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                                    finish()
+                                } else {
+                                    progressBar.visibility = View.INVISIBLE
+                                    Toast.makeText(applicationContext, p0.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        })
+                    } else {
+                        progressBar.visibility = View.INVISIBLE
+                        Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
 
+//
+//
+//                storageRef.putFile(uri!!).addOnCompleteListener(object : OnCompleteListener<UploadTask.TaskSnapshot> {
+//                    override fun onComplete(task: Task<UploadTask.TaskSnapshot>) {
+//                        if (task.isSuccessful) {
+//                            var map = HashMap<String, String>()
+//                            map["User_ID"] = firebaseAuth.uid.toString()
+//                            map["User_Name"] = edtFirstName.text.toString() + " " + edtLastName.text.toString()
+//                            map["Phone_Number"] = edtPhoneNumber.text.toString()
+//                            map["Profile_Image"] = storageRef.downloadUrl.toString()
+//                            Log.i("dxdiag", storageRef.downloadUrl.toString())
+//                            map["Group"] = group
+//                            dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
+//                                override fun onComplete(p0: Task<Void>) {
+//                                    if (p0.isSuccessful) {
+//                                        progressBar.visibility = View.INVISIBLE
+//                                        startActivity(Intent(applicationContext, MainActivity::class.java))
+//                                        finish()
+//                                    } else {
+//                                        progressBar.visibility = View.INVISIBLE
+//                                        Toast.makeText(applicationContext, p0.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+//                                    }
+//                                }
+//                            })
+//                        } else {
+//                            progressBar.visibility = View.INVISIBLE
+//                            Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+//                        }
+//                    }
+//                })
             } else {
                 Toast.makeText(this, "Fill all fields first and select a group", Toast.LENGTH_LONG).show()
             }

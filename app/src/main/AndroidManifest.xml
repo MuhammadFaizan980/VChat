@@ -13,7 +13,11 @@
         android:theme="@style/AppTheme">
         <activity android:name=".views.MainActivity" />
         <activity android:name=".views.ActivityLogin">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
@@ -37,11 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.ActivityProfileSettings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
