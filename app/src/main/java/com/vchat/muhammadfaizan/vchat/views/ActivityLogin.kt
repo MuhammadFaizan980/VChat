@@ -1,7 +1,12 @@
 package com.vchat.muhammadfaizan.vchat.views
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -37,6 +42,7 @@ class ActivityLogin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        checkPermissions()
         initViews()
         loginUser()
     }
@@ -158,5 +164,34 @@ class ActivityLogin : AppCompatActivity() {
                     }
 
                 }
+    }
+
+    fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            var permissionArray = arrayOfNulls<String>(2)
+            permissionArray[0] = android.Manifest.permission.ACCESS_COARSE_LOCATION
+            permissionArray[1] = android.Manifest.permission.ACCESS_FINE_LOCATION
+            ActivityCompat.requestPermissions(this@ActivityLogin, permissionArray, 10)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 10) {
+            if (grantResults.size > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    var dialog = AlertDialog.Builder(this)
+                    dialog.setTitle("Warning!")
+                    dialog.setMessage("You must grant location permissions or the ap will not open")
+                    dialog.setCancelable(false)
+                    dialog.setPositiveButton("Close", DialogInterface.OnClickListener { dialogInterface, i ->
+                        finish()
+                        dialogInterface.dismiss()
+                    })
+                    dialog.show()
+                }
+            }
+        }
     }
 }

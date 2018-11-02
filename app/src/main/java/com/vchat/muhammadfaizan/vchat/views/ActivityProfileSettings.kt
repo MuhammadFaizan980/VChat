@@ -1,9 +1,15 @@
 package com.vchat.muhammadfaizan.vchat.views
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
@@ -32,9 +38,11 @@ class ActivityProfileSettings : AppCompatActivity() {
     lateinit var storageRef: StorageReference
     lateinit var dbRef: DatabaseReference
     lateinit var group: String
+    var isPermissionGranted = false
     var arr = arrayOfNulls<String>(4)
     var uri: Uri? = null
     private var REQUEST_CODE: Int = 6
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_settings)
@@ -123,9 +131,28 @@ class ActivityProfileSettings : AppCompatActivity() {
                         dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
                             override fun onComplete(p0: Task<Void>) {
                                 if (p0.isSuccessful) {
-                                    progressBar.visibility = View.INVISIBLE
-                                    startActivity(Intent(applicationContext, MainActivity::class.java))
-                                    finish()
+                                    if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                                            ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        var permissionArray = arrayOfNulls<String>(2)
+                                        permissionArray[0] = android.Manifest.permission.ACCESS_COARSE_LOCATION
+                                        permissionArray[1] = android.Manifest.permission.ACCESS_FINE_LOCATION
+                                        ActivityCompat.requestPermissions(this@ActivityProfileSettings, permissionArray, 9)
+                                    }
+                                        var locationManager: LocationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                        var location: Location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                                        var mMap = HashMap<String, String>()
+                                        mMap["Latitude"] = location.latitude.toString()
+                                        mMap["Longitude"] = location.longitude.toString()
+                                        dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                progressBar.visibility = View.INVISIBLE
+                                                startActivity(Intent(applicationContext, MainActivity::class.java))
+                                                finish()
+                                            } else {
+                                                progressBar.visibility = View.INVISIBLE
+                                                Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                            }
+                                    }
                                 } else {
                                     progressBar.visibility = View.INVISIBLE
                                     Toast.makeText(applicationContext, p0.exception!!.message.toString(), Toast.LENGTH_LONG).show()
@@ -151,5 +178,18 @@ class ActivityProfileSettings : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         progressBar.visibility = View.INVISIBLE
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 9) {
+            if (grantResults.size > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this as Activity, "Permission Denied", Toast.LENGTH_SHORT).show()
+                } else {
+                    isPermissionGranted = true
+                }
+            }
+        }
     }
 }
