@@ -7,11 +7,12 @@
         android:icon="@drawable/ic_home"
         android:title="@string/str_home" />
     <item
-        android:id="@+id/user"
-        android:icon="@drawable/ic_person"
+        android:id="@+id/friends"
+        android:icon="@drawable/ic_friends"
         android:title="@string/str_user" />
     <item
-        android:id="@+id/notification"
-        android:icon="@drawable/ic_notifications"
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_person"
         android:title="@string/str_notification" />
+
 </menu>

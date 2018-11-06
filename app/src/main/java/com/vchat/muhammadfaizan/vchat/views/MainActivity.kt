@@ -12,11 +12,11 @@ import com.vchat.muhammadfaizan.vchat.R
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private lateinit var mNav: BottomNavigationView
-    private lateinit var home: HomeFragment
-    private lateinit var user: UserFragmnet
-    private lateinit var notification: NotificationFragment
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressbar: ProgressBar
+    lateinit var home : HomeFragment
+    lateinit var friends : FriendsFragment
+    lateinit var profile : ProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +28,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun initViews() {
         mNav = findViewById(R.id.mNav)
-        home = HomeFragment()
-        user = UserFragmnet()
-        notification = NotificationFragment()
         firebaseAuth = FirebaseAuth.getInstance()
         progressbar = findViewById(R.id.mainPBar)
+        home = HomeFragment()
+        friends = FriendsFragment()
+        profile = ProfileFragment()
     }
 
     private fun setListener() {
@@ -45,12 +45,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 setFragment(home)
                 return true
             }
-            R.id.user -> {
-                setFragment(user)
+            R.id.friends -> {
+                setFragment(friends)
                 return true
             }
-            R.id.notification -> {
-                setFragment(notification)
+            R.id.profile -> {
+                setFragment(profile)
                 return true
             }
             else -> {
