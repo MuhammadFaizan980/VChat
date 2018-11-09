@@ -6,33 +6,30 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 import com.vchat.muhammadfaizan.vchat.R
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private lateinit var mNav: BottomNavigationView
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var progressbar: ProgressBar
     lateinit var home : HomeFragment
-    lateinit var friends : FriendsFragment
+    lateinit var users : FragmentUsers
     lateinit var profile : ProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initViews()
-        setFragment(HomeFragment())
+        setFragment(home)
         setListener()
     }
 
     private fun initViews() {
         mNav = findViewById(R.id.mNav)
         firebaseAuth = FirebaseAuth.getInstance()
-        progressbar = findViewById(R.id.mainPBar)
         home = HomeFragment()
-        friends = FriendsFragment()
         profile = ProfileFragment()
+        users = FragmentUsers()
     }
 
     private fun setListener() {
@@ -45,8 +42,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 setFragment(home)
                 return true
             }
-            R.id.friends -> {
-                setFragment(friends)
+            R.id.users -> {
+                setFragment(users)
                 return true
             }
             R.id.profile -> {
