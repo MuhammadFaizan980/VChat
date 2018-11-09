@@ -39,7 +39,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginBottom="0dp"
         app:elevation="0dp"
-        app:itemBackground="@color/colorPrimary"
+        android:background="@color/colorPrimary"
         app:itemIconTint="@color/colors"
         app:itemTextColor="@color/colors"
         app:menu="@menu/menu_main" />
