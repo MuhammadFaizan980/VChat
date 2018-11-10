@@ -3,6 +3,7 @@ package com.vchat.muhammadfaizan.vchat.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -76,10 +77,13 @@ class ActivityProfileSettings : AppCompatActivity() {
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                var preferences = getSharedPreferences("user_group", Context.MODE_PRIVATE)
+                var editor = preferences.edit()
+                editor.putString("group_name", arr[p2].toString())
+                editor.apply()
                 group = arr[p2].toString()
             }
         }
@@ -112,7 +116,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                     !edtLastName.text.toString().equals("") &&
                     !edtPhoneNumber.text.toString().equals("")) {
                 progressBar.visibility = View.VISIBLE
-                var uploadTask: UploadTask = storageRef.putFile(uri!!);
+                var uploadTask: UploadTask = storageRef.putFile(uri!!)
                 val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let {
@@ -151,9 +155,23 @@ class ActivityProfileSettings : AppCompatActivity() {
                                                     .setPhotoUri(uri).build()
                                             firebaseAuth.currentUser!!.updateProfile(profileChangeRequest).addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
-                                                    progressBar.visibility = View.INVISIBLE
-                                                    startActivity(Intent(applicationContext, MainActivity::class.java))
-                                                    finish()
+                                                    var groupProfileData = HashMap<String, String>();
+                                                    groupProfileData["User_ID"] = firebaseAuth.uid.toString()
+                                                    groupProfileData["User_Name"] = edtFirstName.text.toString().trim() + " " + edtLastName.text.toString().trim()
+                                                    groupProfileData["Phone_Number"] = edtPhoneNumber.text.toString()
+                                                    groupProfileData["Profile_Image"] = downloadUri.toString()
+                                                    groupProfileData["Latitude"] = location.latitude.toString()
+                                                    groupProfileData["Longitude"] = location.longitude.toString()
+                                                    FirebaseDatabase.getInstance().getReference("Groups").child(group).child("Members").child(firebaseAuth.uid!!).setValue(groupProfileData).addOnCompleteListener { task ->
+                                                        if (task.isSuccessful) {
+                                                            progressBar.visibility = View.INVISIBLE
+                                                            startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+                                                            this@ActivityProfileSettings.finish()
+                                                        } else {
+                                                            progressBar.visibility = View.INVISIBLE
+                                                            Toast.makeText(this@ActivityProfileSettings, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
                                                 } else {
                                                     progressBar.visibility = View.INVISIBLE
                                                     Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()

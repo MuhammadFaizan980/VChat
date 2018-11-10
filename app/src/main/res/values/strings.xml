@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">V Chat</string>
     <string name="str_home">Home</string>
-    <string name="str_user">Friends</string>
+    <string name="str_users">Users</string>
     <string name="str_notification">Profile</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -13,5 +13,6 @@
 
     <string name="facebook_app_id">342559236309261</string>
     <string name="fb_login_protocol_scheme">fb342559236309261</string>
+    <string name="str_profile">Profile</string>
 
 </resources>
