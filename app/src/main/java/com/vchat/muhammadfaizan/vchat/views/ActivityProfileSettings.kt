@@ -111,7 +111,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                     !edtLastName.text.toString().equals("") &&
                     !edtPhoneNumber.text.toString().equals("")) {
                 progressBar.visibility = View.VISIBLE
-                var uploadTask: UploadTask = storageRef.putFile(uri!!);
+                var uploadTask: UploadTask = storageRef.putFile(uri!!)
                 val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let {

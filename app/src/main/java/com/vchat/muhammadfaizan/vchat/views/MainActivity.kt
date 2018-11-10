@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initViews()
-        setFragment(home)
+        setFragment(users)
         setListener()
     }
 
