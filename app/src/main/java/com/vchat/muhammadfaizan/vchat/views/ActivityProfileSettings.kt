@@ -3,6 +3,7 @@ package com.vchat.muhammadfaizan.vchat.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -79,6 +80,10 @@ class ActivityProfileSettings : AppCompatActivity() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                var preferences = getSharedPreferences("user_group", Context.MODE_PRIVATE)
+                var editor = preferences.edit()
+                editor.putString("group_name", arr[p2].toString())
+                editor.apply()
                 group = arr[p2].toString()
             }
         }
