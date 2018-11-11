@@ -55,9 +55,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_user_image" />
+                                      <entry key="outputName" value="add_user" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="7a7a7a" />
+                                      <entry key="themeColor" value="474747" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -93,7 +93,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_person_add_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_person_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -103,7 +103,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_people" />
+                            <entry key="outputName" value="add_user" />
                             <entry key="sourceFile" value="C:\Users\Muhammad Faizan" />
                           </map>
                         </option>
