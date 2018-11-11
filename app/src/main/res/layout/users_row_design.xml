@@ -12,7 +12,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_user_image"
+        android:src="@drawable/add_user"
         app:civ_border_color="@color/colorPrimary"
         app:civ_border_width="1.5dp"
         app:layout_constraintBottom_toBottomOf="parent"
