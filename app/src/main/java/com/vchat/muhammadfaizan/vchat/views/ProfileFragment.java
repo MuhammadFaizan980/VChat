@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.vchat.muhammadfaizan.vchat.R;
 import com.vchat.muhammadfaizan.vchat.model.User_Fragment_Data;
+import com.vchat.muhammadfaizan.vchat.model.User_Profile_Data;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +52,11 @@ public class ProfileFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                User_Profile_Data obj = dataSnapshot.getValue(User_Profile_Data.class);
+                txtUserName.setText(obj.getUser_Name());
+                txtUserPhone.setText(obj.getPhone_Number());
+                txtUserGroup.setText(obj.getGroup());
+                Picasso.get().load(obj.getProfile_Image()).into(imgUserProfile);
             }
 
             @Override
