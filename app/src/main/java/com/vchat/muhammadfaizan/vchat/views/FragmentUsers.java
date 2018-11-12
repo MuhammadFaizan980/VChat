@@ -12,9 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,12 +20,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.vchat.muhammadfaizan.vchat.R;
 import com.vchat.muhammadfaizan.vchat.model.User_Fragment_Data;
-import com.vchat.muhammadfaizan.vchat.presenters.Users_List_Adapter;
+import com.vchat.muhammadfaizan.vchat.controller.Users_List_Adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FragmentUsers extends Fragment {
     RecyclerView recyclerView;

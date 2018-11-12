@@ -1,4 +1,4 @@
-package com.vchat.muhammadfaizan.vchat.presenters
+package com.vchat.muhammadfaizan.vchat.controller
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.vchat.muhammadfaizan.vchat.R
 import com.vchat.muhammadfaizan.vchat.model.User_Fragment_Data
