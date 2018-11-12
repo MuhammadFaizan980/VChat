@@ -3,7 +3,6 @@ package com.vchat.muhammadfaizan.vchat.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -165,8 +164,16 @@ class ActivityProfileSettings : AppCompatActivity() {
                                                     FirebaseDatabase.getInstance().getReference("Groups").child(group).child("Members").child(firebaseAuth.uid!!).setValue(groupProfileData).addOnCompleteListener { task ->
                                                         if (task.isSuccessful) {
                                                             progressBar.visibility = View.INVISIBLE
-                                                            startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
-                                                            this@ActivityProfileSettings.finish()
+                                                            if(intent.extras.getString("group") !=null){
+                                                                FirebaseDatabase.getInstance().getReference("Groups").child(intent.extras.getString("group")).child("Members").child(firebaseAuth.uid.toString()).setValue(null).addOnCompleteListener { task ->
+                                                                    startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+                                                                    this@ActivityProfileSettings.finish()
+                                                                }
+                                                            }
+                                                            else {
+                                                                startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+                                                                this@ActivityProfileSettings.finish()
+                                                            }
                                                         } else {
                                                             progressBar.visibility = View.INVISIBLE
                                                             Toast.makeText(this@ActivityProfileSettings, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()

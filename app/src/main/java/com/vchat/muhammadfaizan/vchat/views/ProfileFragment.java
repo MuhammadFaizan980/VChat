@@ -33,6 +33,7 @@ public class ProfileFragment extends Fragment {
     private CircleImageView imgUserProfile;
     private DatabaseReference databaseReference;
     private ImageView editProfile;
+    private String user_group;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +62,7 @@ public class ProfileFragment extends Fragment {
                 txtUserName.setText(obj.getUser_Name());
                 txtUserPhone.setText(obj.getPhone_Number());
                 txtUserGroup.setText(obj.getGroup());
+                user_group = obj.getGroup();
                 Picasso.get().load(obj.getProfile_Image()).into(imgUserProfile);
             }
 
@@ -74,7 +76,9 @@ public class ProfileFragment extends Fragment {
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), ActivityProfileSettings.class));
+                Intent intent=new Intent(view.getContext(), ActivityProfileSettings.class);
+                intent.putExtra("group", user_group);
+                startActivity(intent);
                 getActivity().finish();
             }
         });
