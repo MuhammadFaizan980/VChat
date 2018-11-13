@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +71,7 @@ class HomeFragment : Fragment() {
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                     var obj : User_Message_Data = p0.getValue(User_Message_Data::class.java)!!
                     list.add(obj)
+                    Log.i("img_url", FirebaseAuth.getInstance().currentUser?.photoUrl.toString())
                     adapter.notifyDataSetChanged()
                 }
 

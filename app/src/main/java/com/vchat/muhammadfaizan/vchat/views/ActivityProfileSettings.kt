@@ -82,10 +82,6 @@ class ActivityProfileSettings : AppCompatActivity() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                var preferences = getSharedPreferences("user_group", Context.MODE_PRIVATE)
-                var editor = preferences.edit()
-                editor.putString("group_name", arr[p2].toString())
-                editor.apply()
                 group = arr[p2].toString()
             }
         }
@@ -117,6 +113,10 @@ class ActivityProfileSettings : AppCompatActivity() {
                     !edtFirstName.text.toString().equals("") &&
                     !edtLastName.text.toString().equals("") &&
                     !edtPhoneNumber.text.toString().equals("")) {
+                var preferences = getSharedPreferences("user_group", Context.MODE_PRIVATE)
+                var editor = preferences.edit()
+                editor.putString("group_name", group)
+                editor.apply()
                 progressBar.visibility = View.VISIBLE
                 var uploadTask: UploadTask = storageRef.putFile(uri!!)
                 val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
