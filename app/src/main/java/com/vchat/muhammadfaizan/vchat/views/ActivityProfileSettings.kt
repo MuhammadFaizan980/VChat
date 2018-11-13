@@ -134,8 +134,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                         map["Group"] = group
                         dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
                             override fun onComplete(p0: Task<Void>) {
-                                if (p0.isSuccessful) {
-                                    if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                                if (p0.isSuccessful) {                                    if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                                             ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         var permissionArray = arrayOfNulls<String>(2)
                                         permissionArray[0] = android.Manifest.permission.ACCESS_COARSE_LOCATION
