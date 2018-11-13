@@ -173,7 +173,7 @@ class ActivityProfileSettings : AppCompatActivity() {
                                                             FirebaseDatabase.getInstance().getReference("Groups").child(group).child("Members").child(firebaseAuth.uid!!).setValue(groupProfileData).addOnCompleteListener { task ->
                                                                 if (task.isSuccessful) {
                                                                     progressBar.visibility = View.INVISIBLE
-                                                                    if (intent.extras.getString("group") != null) {
+                                                                    if (intent.extras.getString("group") != null && intent.extras.get("group")!= group) {
                                                                         FirebaseDatabase.getInstance().getReference("Groups").child(intent.extras.getString("group")).child("Members").child(firebaseAuth.uid.toString()).setValue(null).addOnCompleteListener { task ->
                                                                             startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
                                                                             this@ActivityProfileSettings.finish()
