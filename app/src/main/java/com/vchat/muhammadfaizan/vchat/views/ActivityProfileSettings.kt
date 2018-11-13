@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -39,6 +41,7 @@ class ActivityProfileSettings : AppCompatActivity() {
     lateinit var storageRef: StorageReference
     lateinit var dbRef: DatabaseReference
     lateinit var group: String
+    lateinit var location : Location
     var isPermissionGranted = false
     var arr = arrayOfNulls<String>(4)
     var uri: Uri? = null
@@ -141,11 +144,17 @@ class ActivityProfileSettings : AppCompatActivity() {
                                         permissionArray[1] = android.Manifest.permission.ACCESS_FINE_LOCATION
                                         ActivityCompat.requestPermissions(this@ActivityProfileSettings, permissionArray, 9)
                                     }
-                                    var locationManager: LocationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                                    var location: Location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                                     var mMap = HashMap<String, String>()
-                                    mMap["Latitude"] = location.latitude.toString()
-                                    mMap["Longitude"] = location.longitude.toString()
+                                    var locationProvider : FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+                                    var task = locationProvider.lastLocation
+                                    task.addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            location = task.result!!
+                                            mMap["Longitude"] = location.longitude.toString()
+                                            mMap["Latitude"] = location.latitude.toString()
+
+                                        }
+                                    }
                                     dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             var profileChangeRequest = UserProfileChangeRequest.Builder()

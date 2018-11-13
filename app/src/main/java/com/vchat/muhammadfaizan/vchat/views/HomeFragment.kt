@@ -87,7 +87,8 @@ class HomeFragment : Fragment() {
             if (!editText.text.toString().equals("") && editText.text.toString() != null) {
                 message = editText.text.toString().trim()
                 var map = HashMap<String, String>()
-                map["Sender"] = FirebaseAuth.getInstance().currentUser!!.displayName.toString()
+                map["Sender_Name"] = FirebaseAuth.getInstance().currentUser!!.displayName.toString()
+                map["Sender_Key"] = FirebaseAuth.getInstance().uid.toString()
                 map["Sender_Image"] = FirebaseAuth.getInstance().currentUser!!.photoUrl.toString()
                 map["Message"] = message
                 databaseReference!!.push().setValue(map).addOnCompleteListener { task ->
