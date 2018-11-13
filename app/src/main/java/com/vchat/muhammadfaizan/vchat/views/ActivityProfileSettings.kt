@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.*
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -41,10 +41,11 @@ class ActivityProfileSettings : AppCompatActivity() {
     lateinit var storageRef: StorageReference
     lateinit var dbRef: DatabaseReference
     lateinit var group: String
-    lateinit var location : Location
+    lateinit var location: Location
     var isPermissionGranted = false
     var arr = arrayOfNulls<String>(4)
     var uri: Uri? = null
+    var download_uri : Uri? = null
     private var REQUEST_CODE: Int = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,16 +129,17 @@ class ActivityProfileSettings : AppCompatActivity() {
                     return@Continuation storageRef.downloadUrl
                 }).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val downloadUri = task.result
+                        download_uri = task.result
                         var map = HashMap<String, String>()
                         map["User_ID"] = firebaseAuth.uid.toString()
                         map["User_Name"] = edtFirstName.text.toString().trim() + " " + edtLastName.text.toString().trim()
                         map["Phone_Number"] = edtPhoneNumber.text.toString()
-                        map["Profile_Image"] = downloadUri.toString()
+                        map["Profile_Image"] = download_uri.toString()
                         map["Group"] = group
                         dbRef.setValue(map).addOnCompleteListener(object : OnCompleteListener<Void> {
                             override fun onComplete(p0: Task<Void>) {
-                                if (p0.isSuccessful) {                                    if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                                if (p0.isSuccessful) {
+                                    if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                                             ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         var permissionArray = arrayOfNulls<String>(2)
                                         permissionArray[0] = android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -145,46 +147,49 @@ class ActivityProfileSettings : AppCompatActivity() {
                                         ActivityCompat.requestPermissions(this@ActivityProfileSettings, permissionArray, 9)
                                     }
                                     var mMap = HashMap<String, String>()
-                                    var locationProvider : FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+                                    var locationProvider: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
                                     var task = locationProvider.lastLocation
                                     task.addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             location = task.result!!
                                             mMap["Longitude"] = location.longitude.toString()
                                             mMap["Latitude"] = location.latitude.toString()
-
-                                        }
-                                    }
-                                    dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            var profileChangeRequest = UserProfileChangeRequest.Builder()
-                                                    .setDisplayName(edtFirstName.text.toString() + " " + edtLastName.text.toString())
-                                                    .setPhotoUri(uri).build()
-                                            firebaseAuth.currentUser!!.updateProfile(profileChangeRequest).addOnCompleteListener { task ->
+                                            dbRef.updateChildren(mMap as Map<String, String>).addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
-                                                    var groupProfileData = HashMap<String, String>();
-                                                    groupProfileData["User_ID"] = firebaseAuth.uid.toString()
-                                                    groupProfileData["User_Name"] = edtFirstName.text.toString().trim() + " " + edtLastName.text.toString().trim()
-                                                    groupProfileData["Phone_Number"] = edtPhoneNumber.text.toString()
-                                                    groupProfileData["Profile_Image"] = downloadUri.toString()
-                                                    groupProfileData["Latitude"] = location.latitude.toString()
-                                                    groupProfileData["Longitude"] = location.longitude.toString()
-                                                    FirebaseDatabase.getInstance().getReference("Groups").child(group).child("Members").child(firebaseAuth.uid!!).setValue(groupProfileData).addOnCompleteListener { task ->
+                                                    var profileChangeRequest = UserProfileChangeRequest.Builder()
+                                                            .setDisplayName(edtFirstName.text.toString() + " " + edtLastName.text.toString())
+                                                            .setPhotoUri(download_uri).build()
+                                                    firebaseAuth.currentUser!!.updateProfile(profileChangeRequest).addOnCompleteListener { task ->
                                                         if (task.isSuccessful) {
-                                                            progressBar.visibility = View.INVISIBLE
-                                                            if(intent.extras.getString("group") !=null){
-                                                                FirebaseDatabase.getInstance().getReference("Groups").child(intent.extras.getString("group")).child("Members").child(firebaseAuth.uid.toString()).setValue(null).addOnCompleteListener { task ->
-                                                                    startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
-                                                                    this@ActivityProfileSettings.finish()
+                                                            Log.i("image_uri", uri.toString())
+                                                            Log.i("image_uri", firebaseAuth.currentUser!!.photoUrl.toString())
+                                                            var groupProfileData = HashMap<String, String>();
+                                                            groupProfileData["User_ID"] = firebaseAuth.uid.toString()
+                                                            groupProfileData["User_Name"] = edtFirstName.text.toString().trim() + " " + edtLastName.text.toString().trim()
+                                                            groupProfileData["Phone_Number"] = edtPhoneNumber.text.toString()
+                                                            groupProfileData["Profile_Image"] = download_uri.toString()
+                                                            groupProfileData["Latitude"] = location.latitude.toString()
+                                                            groupProfileData["Longitude"] = location.longitude.toString()
+                                                            FirebaseDatabase.getInstance().getReference("Groups").child(group).child("Members").child(firebaseAuth.uid!!).setValue(groupProfileData).addOnCompleteListener { task ->
+                                                                if (task.isSuccessful) {
+                                                                    progressBar.visibility = View.INVISIBLE
+                                                                    if (intent.extras.getString("group") != null) {
+                                                                        FirebaseDatabase.getInstance().getReference("Groups").child(intent.extras.getString("group")).child("Members").child(firebaseAuth.uid.toString()).setValue(null).addOnCompleteListener { task ->
+                                                                            startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+                                                                            this@ActivityProfileSettings.finish()
+                                                                        }
+                                                                    } else {
+                                                                        startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
+                                                                        this@ActivityProfileSettings.finish()
+                                                                    }
+                                                                } else {
+                                                                    progressBar.visibility = View.INVISIBLE
+                                                                    Toast.makeText(this@ActivityProfileSettings, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                                                                 }
-                                                            }
-                                                            else {
-                                                                startActivity(Intent(this@ActivityProfileSettings, MainActivity::class.java))
-                                                                this@ActivityProfileSettings.finish()
                                                             }
                                                         } else {
                                                             progressBar.visibility = View.INVISIBLE
-                                                            Toast.makeText(this@ActivityProfileSettings, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                                            Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                                                         }
                                                     }
                                                 } else {
@@ -192,11 +197,10 @@ class ActivityProfileSettings : AppCompatActivity() {
                                                     Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                                                 }
                                             }
-                                        } else {
-                                            progressBar.visibility = View.INVISIBLE
-                                            Toast.makeText(applicationContext, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+
                                         }
                                     }
+
                                 } else {
                                     progressBar.visibility = View.INVISIBLE
                                     Toast.makeText(applicationContext, p0.exception!!.message.toString(), Toast.LENGTH_LONG).show()
@@ -227,7 +231,7 @@ class ActivityProfileSettings : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 9) {
-            if (grantResults.size > 0) {
+            if (grantResults.isNotEmpty()) {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this as Activity, "Permission Denied", Toast.LENGTH_SHORT).show()
                 } else {

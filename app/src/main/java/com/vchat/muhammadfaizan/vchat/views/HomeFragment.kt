@@ -2,6 +2,7 @@ package com.vchat.muhammadfaizan.vchat.views
 
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -51,7 +52,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun prepareList(view : View){
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
+        setLayoutManager(view)
         var adapter = Message_Adapter(list, view.context)
         recyclerView.adapter = adapter
         try {
@@ -73,6 +74,7 @@ class HomeFragment : Fragment() {
                     list.add(obj)
                     Log.i("img_url", FirebaseAuth.getInstance().currentUser?.photoUrl.toString())
                     adapter.notifyDataSetChanged()
+                    setLayoutManager(view)
                 }
 
                 override fun onChildRemoved(p0: DataSnapshot) {
@@ -89,8 +91,10 @@ class HomeFragment : Fragment() {
             if (!editText.text.toString().equals("") && editText.text.toString() != null) {
                 message = editText.text.toString().trim()
                 var map = HashMap<String, String>()
+                var uri : Uri? = FirebaseAuth.getInstance().currentUser!!.photoUrl
+                Log.i("image_uri", uri.toString())
                 map["Sender_Name"] = FirebaseAuth.getInstance().currentUser!!.displayName.toString()
-                map["Sender_Key"] = FirebaseAuth.getInstance().uid.toString()
+                map["Sender_Key"] = FirebaseAuth.getInstance().uid!!.toString()
                 map["Sender_Image"] = FirebaseAuth.getInstance().currentUser!!.photoUrl.toString()
                 map["Message"] = message
                 databaseReference!!.push().setValue(map).addOnCompleteListener { task ->
@@ -98,9 +102,16 @@ class HomeFragment : Fragment() {
                         Toast.makeText(view.context, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
+                editText.setText("")
             } else {
                 editText.error = "Cannot be empty"
             }
         }
+    }
+
+    private fun setLayoutManager(view : View){
+        var layout_manager = LinearLayoutManager(view.context)
+        layout_manager.stackFromEnd = true
+        recyclerView.layoutManager = layout_manager
     }
 }
