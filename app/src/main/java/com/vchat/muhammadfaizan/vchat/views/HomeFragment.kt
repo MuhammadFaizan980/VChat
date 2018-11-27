@@ -73,8 +73,8 @@ class HomeFragment : Fragment() {
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                     var obj : User_Message_Data = p0.getValue(User_Message_Data::class.java)!!
                     list.add(obj)
-                    adapter.notifyDataSetChanged()
                     adapter.notifyItemInserted(list.size+1)
+                    adapter.notifyDataSetChanged()
                     setLayoutManager(view)
                 }
 
