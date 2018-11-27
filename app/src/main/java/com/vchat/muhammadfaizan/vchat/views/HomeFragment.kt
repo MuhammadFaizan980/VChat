@@ -73,13 +73,12 @@ class HomeFragment : Fragment() {
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                     var obj : User_Message_Data = p0.getValue(User_Message_Data::class.java)!!
                     list.add(obj)
-                    Log.i("img_url", FirebaseAuth.getInstance().currentUser?.photoUrl.toString())
                     adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(list.size+1)
                     setLayoutManager(view)
                 }
 
                 override fun onChildRemoved(p0: DataSnapshot) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
         } catch (e : Exception) {
