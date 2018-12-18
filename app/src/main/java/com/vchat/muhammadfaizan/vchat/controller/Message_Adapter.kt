@@ -20,7 +20,6 @@ class Message_Adapter constructor(mList: List<User_Message_Data>, mContext: Cont
     var context = mContext
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): holder {
-        hasStableIds()
         var inflater = LayoutInflater.from(parent.context)
         var view: View = inflater.inflate(R.layout.message_row_design, parent, false)
         return holder(view)
